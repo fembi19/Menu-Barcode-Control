@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use nguyenary\QRCodeMonkey\QRCode;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,7 @@ Route::get('/logout', function () {
 
 Route::get('pengaturan', function () {
 
+
     $sesusr = request()->session()->get('username');
     $sespass = request()->session()->get('password');
 
@@ -72,6 +74,59 @@ Route::get('pengaturan', function () {
     }
 
     return view('pengaturan');
+});
+Route::post('/pengaturan', function () {
+
+    $nama = request()->input('nama');
+    $bgColor = request()->input('bgColor');
+    $bodyColor = request()->input('bodyColor');
+    $body = request()->input('body');
+    $eye = request()->input('eye');
+    $gradientColor1 = request()->input('gradientColor1');
+    $gradientColor2 = request()->input('gradientColor2');
+
+    if ($gradientColor1) {
+        $gradientOnEyes = true;
+    } else {
+        $gradientOnEyes = false;
+    }
+    $gradientType = request()->input('gradientType');
+
+
+    $eyeBall = request()->input('eyeBall');
+    $qrcode = new QRCode("$nama");
+
+    $qrcode->setConfig([
+        'bgColor' => $bgColor,
+        'body' => $body,
+        'brf1' => [],
+        'brf2' => [],
+        'brf3' => [],
+        'erf1' => [],
+        'erf2' => [],
+        'erf3' => [],
+
+        'eye' => $eye,
+        'eyeBall' => $eyeBall,
+        'eye1Color' => '#000000',
+        'eye2Color' => '#000000',
+        'eye3Color' => '#000000',
+        'eyeBall1Color' => '#000000',
+        'eyeBall2Color' => '#000000',
+        'eyeBall3Color' => '#000000',
+
+        'bodyColor' => $bodyColor,
+        'gradientColor1' => $gradientColor1,
+        'gradientColor2' => $gradientColor2,
+        'gradientOnEyes' => $gradientOnEyes,
+        'gradientType' => 'linear',
+    ]);
+
+    // $qrcode->setLogo('http://localhost/menu_laravel/system/public/assets/pages/d.jpg', "clean");
+
+    $qrcode->setFileType('png');
+    $data['url'] = $qrcode->create();
+    return view('pengaturan', $data);
 });
 
 
