@@ -2,22 +2,40 @@
 ?>
 
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
     <link rel="icon" type="image/png" href="/logo.png" />
     <title>Menu Barcode System</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Latest Sortable -->
+    <script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
 </head>
 
 <body>
 
 
     @if ($message = Session::get('success'))
-    <div class="alert alert-success alert-block">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <strong>{{ $message }}</strong>
-    </div>
+        <div class="alert alert-success alert-block">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>{{ $message }}</strong>
+        </div>
+    @endif
+
+
+    @if ($err = Session::get('error'))
+        <div class="alert alert-danger alert-block">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>{{ $err }}</strong>
+        </div>
     @endif
 
     <br>
@@ -31,84 +49,87 @@
                 <th scope="col">Gambar</th>
                 <th scope="col">Ukuran</th>
                 <th scope="col">Nama</th>
-                <th scope="col">Enter Untuk Ubah Nama</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="listWithHandle">
             <?php
-
-            $content = file_get_contents("datagambar.json");
+            
+            $content = file_get_contents('datagambar.json');
             //mengubah standar encoding
             $content = utf8_encode($content);
-
+            
             //mengubah data json menjadi data array asosiatif
             $result = json_decode($content, true);
-            sort($result);
-            $no = 1;
-
-            function getPotongAngka($angka)
-            {
-                $angka = (int)$angka;
-                $i_str = (string)$angka;
-                $angkax = substr($i_str, 0, -3);
-                return (int)$angkax;
+            if ($result) {
+                function cmp($a, $b)
+                {
+                    return $a['id'] > $b['id'];
+                }
+            
+                usort($result, 'cmp');
+            
+                $no = 1;
+            
+                function getPotongAngka($angka)
+                {
+                    $angka = (int) $angka;
+                    $i_str = (string) $angka;
+                    $angkax = substr($i_str, 0, -3);
+                    return (int) $angkax;
+                }
+            
+                foreach ($result as $value) {
+                    $nama_file = $value['nama_file'];
+                    $id = $value['id'];
+                    if (file_exists('assets/pages/' . $nama_file)) {
+                        $size = filesize('assets/pages/' . $nama_file);
+                        echo "<tr data-id='$id' class='list-group-item'><th class='move' style='cursor: move;' scope='row' >  <span class='fa fa-arrows' aria-hidden='true'></span></th><td><a href='assets/pages/$nama_file' target='_blank'><img height='60px' src='assets/pages/$nama_file' ></a></td><td>" . getPotongAngka($size) . " Kb <a href='/compres/$nama_file'>compres</a></td><td><a href='assets/pages/$nama_file' target='_blank'>$nama_file</a></td><td><form method='get'  id='myForm' action='" . url('/') . "/hapus'><input type='hidden' name='id' value='$id'><input type='hidden' name='url' value='assets/pages/$nama_file'><button type='submit'  id='btn-submit' class='btn btn-danger'>Hapus</button></form></td></tr>";
+                        $no++;
+                    }
+                }
+            } else {
+                $no = 1;
+                $result = [];
             }
-
-            foreach ($result as $value) {
-                $nama_file = $value['nama_file'];
-                $size = filesize("assets/pages/" . $nama_file);
-                echo "
-   							 <tr>
-      						<th scope='row'> $no
-                  </th>
-	  						<td><a href='assets/pages/$nama_file' target='_blank'><img height='60px' src='assets/pages/$nama_file' ></a></td>
-							  <td>
-                " . getPotongAngka($size) . " Kb <a href='/compres/$nama_file'>compres</a>
-                </td>
-                <td><a href='assets/pages/$nama_file' target='_blank'>$nama_file</a></td>
-	  						<td>
-							   <form method='get' id='myForm1' action='" . url('/') . "/rename'>
-							   <input class='form-control' type='text' placeholder='Enter untuk ubah' value='$nama_file' name='nama_file_ubah'>
-							 <input type='hidden' name='folder' value='assets/pages/'> 
-							 <input type='hidden' name='nama_file' value='$nama_file'> 
-							  <button type='submit' id='btn-submit1' style='display:none;' class='btn btn-primary'>Ubah</button>
-							  </form></td>
-	  						<td>
-							  
-							 <form method='get'  id='myForm' action='" . url('/') . "/hapus'>
-							 <input type='hidden' name='url' value='assets/pages/$nama_file'> 
-							  <button type='submit'  id='btn-submit' class='btn btn-danger'>Hapus</button>
-							  </form>
-
-							  </td>
-    						</tr>";
-                $no++;
+            
+            if ($no == 1) {
+                echo "<tr><td colspan='6'><center><b>Tidak ditemukan</b></center></td></tr>";
             }
-
+            
             ?>
         </tbody>
     </table>
-
-
-
-    <br>
-    <br>
-    <script>
-        // Add the following code if you want the name of the file appear on select
-        $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        });
-    </script>
-    <a href="<?= url('/logout') ?>">
-        <button style='position:fixed;top:0;right:0;border-radius: 0px 0px 0px 30px;width: 100px;' class='btn btn-danger'>Logout</button>
-    </a>
+    <div style="
+    position: relative;
+    margin-top: -13px;
+    padding: 10px;
+    background: #fff2f2;
+"><i class="fa fa-warning"></i> Drag & Drop untuk pengurutan</div>
 
 
     <br>
+    <br>
+    <form class="container mt-3" action="<?php echo url('/upload'); ?>" method="POST" enctype="multipart/form-data">
+        @csrf
+        <h1>
+            <center>Upload File</center>
+        </h1>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg" name='upload_file'
+                id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+        <br><br>
+        <button type='submit' class='btn btn-primary'>Upload</button>
+    </form>
+    <br>
+    <br>
 
-    <form class="container mt-3" action="{{ url('/pengaturan') }}" method="POST" enctype="multipart/form-data">
+    <br>
+
+    <form class="container mt-3" action="{{ url('/pengaturan') }}" method="POST" enctype="multipart/form-data"
+        id="idForm">
 
         <h1>
             <center>Create Barcode</center>
@@ -119,7 +140,8 @@
                     @csrf
                     <div class="form-group">
                         <label for="nama">Isi tulisan</label>
-                        <input type="text" required class="form-control" id="nama" name="nama" placeholder="Isi tulisan">
+                        <input type="text" required class="form-control" id="nama" name="nama"
+                            placeholder="Isi tulisan">
                     </div>
                     <div class="form-group">
                         <label for="bgColor">Backgroud Color</label>
@@ -127,10 +149,29 @@
                     </div>
                     <div class="form-group">
                         <label for="bodyColor">Foreground Color</label><br>
-                        <input type="radio" value="false" checked onclick="gradient(this.value)" name="gradientColor1"> Singel
-                        <input type="radio" value="true" onclick="gradient(this.value)" name="gradientColor1"> Gradient
+                        <input type="radio" checked onclick="gradient(this.value, 0)" value="true" name="singel"> Singel
+                        <input type="radio" onclick="gradient(this.value, 0)" value="false" name="singel"> Gradient
+
+                        <br><br>
                         <div id="result">
-                            <input value="#0000000" class="form-control" name="bodyColor" required data-jscolor="{}">
+                            <input value="#000000" class="form-control" name="bodyColor" data-jscolor="{}">
+                        </div>
+                        <div id="result2" style="display: none;">
+                            <input class="form-control" name="gradientColor1" data-jscolor="{}"><br>
+                            <input class="form-control" name="gradientColor2" data-jscolor="{}"><br>
+                            <input type="radio" checked value="linear" name="gradientType"> Liner
+                            <input type="radio" value="radial" name="gradientType"> Radial
+
+                        </div>
+                        <br>
+                        <input type="checkbox" onclick="eyecolor(this.value)" id="gradientOnEyes" name="gradientOnEyes"
+                            value="true"> Custom Eye Color
+
+                        <div id="result3" style="display: none;">
+                            <br>
+                            <input class="form-control" name="eye1Color" data-jscolor="{}"><br>
+                            <input class="form-control" name="eyeBall1Color" data-jscolor="{}"><br>
+
                         </div>
                     </div>
 
@@ -323,19 +364,19 @@
 
                     <label for="nama">Logo</label>
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg" name='upload_file' id="customFile">
+                        <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg"
+                            name='logo' id="customFile">
                         <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
                 </div>
                 <div class="col">
                     <center>
-                        @if(isset($url))
-                        <img src="{{ $url }}" width="300">
-                        @else
-                        <img src="https://www.qrcode-monkey.com/img/default-preview-qr.svg" class="img-fluid" width="300">
-                        @endif
-                        <br><br>
-                        <button type='submit' class='btn btn-primary'>Buat QR Code</button>
+                        <div id="img">
+                            <img src="https://www.qrcode-monkey.com/img/default-preview-qr.svg" class="img-fluid"
+                                width="300">
+
+                        </div>
+                        <button type='submit' class='btn btn-primary'>Buat QR Code</button><br>
                     </center>
                 </div>
             </div>
@@ -344,13 +385,69 @@
 
 
 
-    <script src="assets/js/jscolor.min.js"></script>
+    <script src="{{ url('/') }}/assets/js/jscolor.min.js"></script>
     <script>
         function gradient(val) {
-            document.getElementById("result").value = val;
+            if (val == 'true') {
+                document.getElementById("result2").style.display = "none";
+                document.getElementById("result").style.display = "block";
+            } else {
+                document.getElementById("result").style.display = "none";
+                document.getElementById("result2").style.display = "block";
+            }
+
         }
+
+        function eyecolor(val) {
+            var x = document.getElementById("gradientOnEyes").checked;
+            if (x) {
+                document.getElementById("result3").style.display = "block";
+            } else {
+                document.getElementById("result3").style.display = "none";
+            }
+
+        }
+
+        $("#idForm").submit(function(e) {
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+
+            var form = $(this);
+            var actionUrl = form.attr('action');
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: actionUrl,
+                dataType: "json",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+                    document.getElementById("img").innerHTML = '<img src="' + data.url +
+                        '" class="img-fluid" width="300">';
+                }
+            });
+
+        });
     </script>
     <style>
+        .list-group-item {
+            position: unset;
+            display: revert;
+        }
+
+        .glyphicon-move {
+            cursor: move;
+            cursor: -webkit-grabbing;
+        }
+
+        label {
+            font-weight: bolder;
+        }
+
         .cc-selector input {
             margin: 0;
             padding: 0;
@@ -620,4 +717,52 @@
             filter: brightness(1.2) grayscale(.5) opacity(.9);
         }
     </style>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        var data = <?= json_encode($result) ?>;
+
+        // List with handle
+        Sortable.create(listWithHandle, {
+            handle: '.move',
+            animation: 150,
+            group: "data",
+            store: {
+                get: function(sortable) {
+                    // var order = localStorage.getItem(sortable.options.group.name);
+                    // return order ? order.split('|') : [];
+                },
+                set: function(sortable) {
+                    var order = sortable.toArray();
+                    $.ajax({
+                        url: "{{ url('/posisi') }}",
+                        type: "POST",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            data: order
+                        },
+                        success: function(response) {
+                            if (response == 'success') {
+                                location.reload();
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.log(textStatus, errorThrown);
+                        }
+                    });
+                    // localStorage.setItem(sortable.options.group.name, order.join('|'));
+                }
+            }
+
+        });
+    </script>
+    <a href="<?= url('/logout') ?>">
+        <button style='position:fixed;top:0;right:0;border-radius: 0px 0px 0px 30px;width: 100px;'
+            class='btn btn-danger'>Logout</button>
+    </a>
+
 </body>
