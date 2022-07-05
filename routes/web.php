@@ -260,7 +260,7 @@ Route::post('/upload', function (Request $request) {
 
     if ($request->hasFile('upload_file')) {
 
-        $path = __DIR__ . '/assets/pages/';
+        $path = public_path('assets/pages/');
 
         $fileName = uniqid() . '.' . $ext;
 
