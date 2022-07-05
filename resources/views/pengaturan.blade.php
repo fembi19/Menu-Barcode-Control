@@ -61,6 +61,7 @@
             
             //mengubah data json menjadi data array asosiatif
             $result = json_decode($content, true);
+            
             if ($result) {
                 function cmp($a, $b)
                 {
@@ -96,7 +97,6 @@
             if ($no == 1) {
                 echo "<tr><td colspan='6'><center><b>Tidak ditemukan</b></center></td></tr>";
             }
-            
             ?>
         </tbody>
     </table>
@@ -105,7 +105,8 @@
     margin-top: -13px;
     padding: 10px;
     background: #fff2f2;
-"><i class="fa fa-warning"></i> Drag & Drop untuk pengurutan</div>
+"><i
+            class="fa fa-warning"></i> Drag & Drop untuk pengurutan</div>
 
 
     <br>
@@ -149,7 +150,8 @@
                     </div>
                     <div class="form-group">
                         <label for="bodyColor">Foreground Color</label><br>
-                        <input type="radio" checked onclick="gradient(this.value, 0)" value="true" name="singel"> Singel
+                        <input type="radio" checked onclick="gradient(this.value, 0)" value="true" name="singel">
+                        Singel
                         <input type="radio" onclick="gradient(this.value, 0)" value="false" name="singel"> Gradient
 
                         <br><br>
@@ -192,7 +194,8 @@
                         <input id="circle-zebra" type="radio" name="body" value="circle-zebra" />
                         <label class="drinkcard-cc circle-zebra" for="circle-zebra"></label>
 
-                        <input id="circle-zebra-vertical" type="radio" name="body" value="circle-zebra-vertical" />
+                        <input id="circle-zebra-vertical" type="radio" name="body"
+                            value="circle-zebra-vertical" />
                         <label class="drinkcard-cc circle-zebra-vertical" for="circle-zebra-vertical"></label>
 
                         <input id="circular" type="radio" name="body" value="circular" />
