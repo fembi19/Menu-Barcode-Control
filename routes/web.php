@@ -252,15 +252,11 @@ Route::post('/upload', function (Request $request) {
     $ext = $img->getClientOriginalExtension();
 
     $path = 'assets/pages/';
-    // $path = public_path('assets/pages/');
 
     $fileName = uniqid() . '.' . $ext;
 
-    // $img->move($path, $fileName);
+    $img->move($path, $fileName);
 
-    Image::make($request->file('upload_file'))->resize(null, 2000, function ($constraint) {
-        $constraint->aspectRatio();
-    })->save($path . $fileName);
 
     app(Spatie\ImageOptimizer\OptimizerChain::class)->optimize($path . $fileName);
 
@@ -288,8 +284,19 @@ Route::post('/upload', function (Request $request) {
 
     $json_data =  json_encode($json);
     if (file_put_contents('datagambar.json', $json_data)) {
-        return back()
-            ->with('success', 'Gambar Berhasil Terupload');
+
+
+        if (Image::make($path . $fileName)->resize(null, 2000, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($path . $fileName)) {
+
+            return back()
+                ->with('success', 'Gambar Berhasil Terupload & Dicompress');
+        } else {
+
+            return back()
+                ->with('warning', 'Gambar Gagal Dicompres');
+        }
     };
 });
 

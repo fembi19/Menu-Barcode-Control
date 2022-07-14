@@ -487,6 +487,21 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a table comment command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compileTableComment(Blueprint $blueprint, Fluent $command)
+    {
+        return sprintf('comment on table %s is %s',
+            $this->wrapTable($blueprint),
+            "'".str_replace("'", "''", $command->comment)."'"
+        );
+    }
+
+    /**
      * Quote-escape the given tables, views, or types.
      *
      * @param  array  $names
@@ -509,7 +524,11 @@ class PostgresGrammar extends Grammar
      */
     protected function typeChar(Fluent $column)
     {
-        return "char({$column->length})";
+        if ($column->length) {
+            return "char({$column->length})";
+        }
+
+        return 'char';
     }
 
     /**
@@ -520,7 +539,11 @@ class PostgresGrammar extends Grammar
      */
     protected function typeString(Fluent $column)
     {
-        return "varchar({$column->length})";
+        if ($column->length) {
+            return "varchar({$column->length})";
+        }
+
+        return 'varchar';
     }
 
     /**
