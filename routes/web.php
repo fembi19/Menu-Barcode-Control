@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use nguyenary\QRCodeMonkey\QRCode;
-
+use Intervention\Image\Facades\Image;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -248,55 +248,49 @@ Route::get('/rename', function () {
 
 Route::post('/upload', function (Request $request) {
 
-    if ($request->hasFile('upload_file')) {
-        $img = $request->file('upload_file');
-        $name = $img->getClientOriginalName();
-        $ext = $img->getClientOriginalExtension();
-    } else {
-        return back()
-            ->with('error', 'Gagal Uploads Kemungkinan File Terlalu Besar Max:2mb');
-    }
+    $img = $request->file('upload_file');
+    $ext = $img->getClientOriginalExtension();
 
+    $path = 'assets/pages/';
+    // $path = public_path('assets/pages/');
 
-    if ($request->hasFile('upload_file')) {
-        $path = 'assets/pages/';
-        // $path = public_path('assets/pages/');
+    $fileName = uniqid() . '.' . $ext;
 
-        $fileName = uniqid() . '.' . $ext;
+    // $img->move($path, $fileName);
 
-        $img->move($path, $fileName);
+    Image::make($request->file('upload_file'))->resize(null, 2000, function ($constraint) {
+        $constraint->aspectRatio();
+    })->save($path . $fileName);
 
+    app(Spatie\ImageOptimizer\OptimizerChain::class)->optimize($path . $fileName);
 
-        $content = file_get_contents('datagambar.json');
-        $content = utf8_encode($content);
-        $result = json_decode($content, true);
+    $content = file_get_contents('datagambar.json');
+    $content = utf8_encode($content);
+    $result = json_decode($content, true);
 
-        $json = [];
-        if ($result) {
-            $id = count($result) + 1;
-            foreach ($result as $val) {
-                $json[] = [
-                    'id' => $val['id'],
-                    'nama_file' => $val['nama_file']
-                ];
-            }
-        } else {
-            $id = 1;
+    $json = [];
+    if ($result) {
+        $id = count($result) + 1;
+        foreach ($result as $val) {
+            $json[] = [
+                'id' => $val['id'],
+                'nama_file' => $val['nama_file']
+            ];
         }
-
-        $json[] = [
-            'id' => $id,
-            'nama_file' => $fileName
-        ];
-
-        $json_data =  json_encode($json);
-        if (file_put_contents('datagambar.json', $json_data)) {
-            return back()
-                ->with('success', 'Gambar Berhasil Terupload');
-        };
     } else {
-        return ('pengaturan');
+        $id = 1;
     }
+
+    $json[] = [
+        'id' => $id,
+        'nama_file' => $fileName
+    ];
+
+    $json_data =  json_encode($json);
+    if (file_put_contents('datagambar.json', $json_data)) {
+        return back()
+            ->with('success', 'Gambar Berhasil Terupload');
+    };
 });
 
 

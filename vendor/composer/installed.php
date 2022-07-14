@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '3ed3ea72fa9a0f17cc81a799d22eab41b2d26cd4',
+        'reference' => '4d97cee5375b8fe00b3b389c97bef20aa0a8c2b4',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -367,6 +367,15 @@
                 0 => 'v9.6.0',
             ),
         ),
+        'intervention/image' => array(
+            'pretty_version' => '2.7.2',
+            'version' => '2.7.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../intervention/image',
+            'aliases' => array(),
+            'reference' => '04be355f8d6734c826045d02a1079ad658322dad',
+            'dev_requirement' => false,
+        ),
         'kodova/hamcrest-php' => array(
             'dev_requirement' => true,
             'replaced' => array(
@@ -388,7 +397,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '3ed3ea72fa9a0f17cc81a799d22eab41b2d26cd4',
+            'reference' => '4d97cee5375b8fe00b3b389c97bef20aa0a8c2b4',
             'dev_requirement' => false,
         ),
         'laravel/sail' => array(
@@ -986,6 +995,15 @@
             'reference' => '2f059cf42b48f7c522efbba1c05ad59fc2c1a3f2',
             'dev_requirement' => true,
         ),
+        'spatie/image-optimizer' => array(
+            'pretty_version' => '1.6.2',
+            'version' => '1.6.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../spatie/image-optimizer',
+            'aliases' => array(),
+            'reference' => '6db75529cbf8fa84117046a9d513f277aead90a0',
+            'dev_requirement' => false,
+        ),
         'spatie/laravel-ignition' => array(
             'pretty_version' => '1.2.0',
             'version' => '1.2.0.0',
@@ -994,6 +1012,15 @@
             'aliases' => array(),
             'reference' => '2b54c8c66f2d280f25e15064ebe3d5e3eda19820',
             'dev_requirement' => true,
+        ),
+        'spatie/laravel-image-optimizer' => array(
+            'pretty_version' => '1.7.0',
+            'version' => '1.7.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../spatie/laravel-image-optimizer',
+            'aliases' => array(),
+            'reference' => '6f9e8520485df7bfceb62824ef5ec7c8d25b3521',
+            'dev_requirement' => false,
         ),
         'symfony/console' => array(
             'pretty_version' => 'v6.0.7',
