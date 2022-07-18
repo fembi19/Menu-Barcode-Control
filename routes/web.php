@@ -286,7 +286,7 @@ Route::post('/upload', function (Request $request) {
     if (file_put_contents('datagambar.json', $json_data)) {
 
 
-        if (Image::make($path . $fileName)->resize(null, 2000, function ($constraint) {
+        if (Image::make($path . $fileName)->resize(null, 1000, function ($constraint) {
             $constraint->aspectRatio();
         })->save($path . $fileName)) {
 
