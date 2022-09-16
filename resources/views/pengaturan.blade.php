@@ -2,8 +2,7 @@
 ?>
 
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
     <link rel="icon" type="image/png" href="/logo.png" />
     <title>Menu Barcode System</title>
@@ -11,9 +10,7 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Latest Sortable -->
     <script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
 
@@ -23,18 +20,18 @@
 <body>
 
     @if ($message = Session::get('success'))
-        <div class="alert alert-success alert-block">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <strong>{{ $message }}</strong>
-        </div>
+    <div class="alert alert-success alert-block">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>{{ $message }}</strong>
+    </div>
     @endif
 
 
     @if ($err = Session::get('error'))
-        <div class="alert alert-danger alert-block">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <strong>{{ $err }}</strong>
-        </div>
+    <div class="alert alert-danger alert-block">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>{{ $err }}</strong>
+    </div>
     @endif
 
     <br>
@@ -53,24 +50,24 @@
         </thead>
         <tbody id="listWithHandle">
             <?php
-            
+
             $content = file_get_contents('datagambar.json');
             //mengubah standar encoding
             $content = utf8_encode($content);
-            
+
             //mengubah data json menjadi data array asosiatif
             $result = json_decode($content, true);
-            
+
             if ($result) {
                 function cmp($a, $b)
                 {
                     return $a['id'] > $b['id'];
                 }
-            
+
                 usort($result, 'cmp');
-            
+
                 $no = 1;
-            
+
                 function getPotongAngka($angka)
                 {
                     $angka = (int) $angka;
@@ -78,7 +75,7 @@
                     $angkax = substr($i_str, 0, -3);
                     return (int) $angkax;
                 }
-            
+
                 foreach ($result as $value) {
                     $nama_file = $value['nama_file'];
                     $id = $value['id'];
@@ -86,13 +83,35 @@
                         $size = filesize('assets/pages/' . $nama_file);
                         echo "<tr data-id='$id' class='list-group-item'><th class='move' style='cursor: move;' scope='row' >  <span class='fa fa-arrows' aria-hidden='true'></span></th><td><a href='assets/pages/$nama_file' target='_blank'><img height='60px' src='assets/pages/$nama_file' ></a></td><td>" . getPotongAngka($size) . " Kb </td><td><a href='assets/pages/$nama_file' target='_blank'>$nama_file</a></td><td><form method='get'  id='myForm' action='" . url('/') . "/hapus'><input type='hidden' name='id' value='$id'><input type='hidden' name='url' value='assets/pages/$nama_file'><button type='submit'  id='btn-submit' class='btn btn-danger'>Hapus</button></form></td></tr>";
                         $no++;
+                    } else {
+
+                        $content = file_get_contents('datagambar.json');
+                        $content = utf8_encode($content);
+                        $result = json_decode($content, true);
+
+                        $json = [];
+                        if (
+                            $id && $result
+                        ) {
+                            foreach ($result as $val) {
+                                if ($id != $val['id']) {
+                                    $json[] = [
+                                        'id' => $val['id'],
+                                        'nama_file' => $val['nama_file']
+                                    ];
+                                }
+                            }
+                        }
+
+                        $json_data =  json_encode($json);
+                        file_put_contents('datagambar.json', $json_data);
                     }
                 }
             } else {
                 $no = 1;
                 $result = [];
             }
-            
+
             if ($no == 1) {
                 echo "<tr><td colspan='6'><center><b>Tidak ditemukan</b></center></td></tr>";
             }
@@ -104,8 +123,7 @@
     margin-top: -13px;
     padding: 10px;
     background: #fff2f2;
-"><i
-            class="fa fa-warning"></i> Drag & Drop untuk pengurutan</div>
+"><i class="fa fa-warning"></i> Drag & Drop untuk pengurutan</div>
 
 
     <br>
@@ -116,8 +134,7 @@
             <center>Upload File</center>
         </h1>
         <div class="custom-file">
-            <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg" name='upload_file'
-                id="customFile">
+            <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg" name='upload_file' id="customFile">
             <label class="custom-file-label" for="customFile">Choose file</label>
         </div>
         <br><br>
@@ -128,8 +145,7 @@
 
     <br>
 
-    <form class="container mt-3" action="{{ url('/pengaturan') }}" method="POST" enctype="multipart/form-data"
-        id="idForm">
+    <form class="container mt-3" action="{{ url('/pengaturan') }}" method="POST" enctype="multipart/form-data" id="idForm">
 
         <h1>
             <center>Create Barcode</center>
@@ -140,8 +156,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="nama">Isi tulisan</label>
-                        <input type="text" required class="form-control" id="nama" name="nama"
-                            placeholder="Isi tulisan">
+                        <input type="text" required class="form-control" id="nama" name="nama" placeholder="Isi tulisan">
                     </div>
                     <div class="form-group">
                         <label for="bgColor">Backgroud Color</label>
@@ -165,8 +180,7 @@
 
                         </div>
                         <br>
-                        <input type="checkbox" onclick="eyecolor(this.value)" id="gradientOnEyes" name="gradientOnEyes"
-                            value="true"> Custom Eye Color
+                        <input type="checkbox" onclick="eyecolor(this.value)" id="gradientOnEyes" name="gradientOnEyes" value="true"> Custom Eye Color
 
                         <div id="result3" style="display: none;">
                             <br>
@@ -193,8 +207,7 @@
                         <input id="circle-zebra" type="radio" name="body" value="circle-zebra" />
                         <label class="drinkcard-cc circle-zebra" for="circle-zebra"></label>
 
-                        <input id="circle-zebra-vertical" type="radio" name="body"
-                            value="circle-zebra-vertical" />
+                        <input id="circle-zebra-vertical" type="radio" name="body" value="circle-zebra-vertical" />
                         <label class="drinkcard-cc circle-zebra-vertical" for="circle-zebra-vertical"></label>
 
                         <input id="circular" type="radio" name="body" value="circular" />
@@ -366,16 +379,14 @@
 
                     <label for="nama">Logo</label>
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg"
-                            name='logo' id="customFile">
+                        <input type="file" class="custom-file-input" accept="image/png, image/gif, image/jpeg" name='logo' id="customFile">
                         <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
                 </div>
                 <div class="col">
                     <center>
                         <div id="img">
-                            <img src="https://www.qrcode-monkey.com/img/default-preview-qr.svg" class="img-fluid"
-                                width="300">
+                            <img src="https://www.qrcode-monkey.com/img/default-preview-qr.svg" class="img-fluid" width="300">
 
                         </div>
                         <button type='submit' class='btn btn-primary'>Buat QR Code</button><br>
@@ -763,8 +774,7 @@
         });
     </script>
     <a href="<?= url('/logout') ?>">
-        <button style='position:fixed;top:0;right:0;border-radius: 0px 0px 0px 30px;width: 100px;'
-            class='btn btn-danger'>Logout</button>
+        <button style='position:fixed;top:0;right:0;border-radius: 0px 0px 0px 30px;width: 100px;' class='btn btn-danger'>Logout</button>
     </a>
 
 </body>
