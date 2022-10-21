@@ -56,7 +56,14 @@
             //mengubah data json menjadi data array asosiatif
             $result = json_decode($content, true);
 
+
             if ($result) {
+                $array = array_unique($result, SORT_REGULAR);
+            } else {
+                $array = [];
+            }
+
+            if ($array) {
 
                 $no = 1;
 
@@ -68,7 +75,7 @@
                     return (int) $angkax;
                 }
 
-                foreach ($result as $value) {
+                foreach ($array as $value) {
                     $nama_file = $value['nama_file'];
                     $id = $value['id'];
                     if (file_exists('assets/pages/' . $nama_file)) {
@@ -76,16 +83,11 @@
                         echo "<tr data-id='$id' class='list-group-item'><th class='move' style='cursor: move;' scope='row' >  <span class='fa fa-arrows' aria-hidden='true'></span></th><td><a href='assets/pages/$nama_file' target='_blank'><img height='60px' src='assets/pages/$nama_file' ></a></td><td>" . getPotongAngka($size) . " Kb </td><td><a href='assets/pages/$nama_file' target='_blank'>$nama_file</a></td><td><form method='get'  id='myForm' action='" . url('/') . "/hapus'><input type='hidden' name='id' value='$id'><input type='hidden' name='url' value='assets/pages/$nama_file'><button type='submit'  id='btn-submit' class='btn btn-danger'>Hapus</button></form></td></tr>";
                         $no++;
                     } else {
-
-                        $content = file_get_contents('datagambar.json');
-                        $content = utf8_encode($content);
-                        $result = json_decode($content, true);
-
                         $json = [];
                         if (
-                            $id && $result
+                            $id && $array
                         ) {
-                            foreach ($result as $val) {
+                            foreach ($array as $val) {
                                 if ($id != $val['id']) {
                                     $json[] = [
                                         'id' => $val['id'],
@@ -101,7 +103,7 @@
                 }
             } else {
                 $no = 1;
-                $result = [];
+                $array = [];
             }
 
             if ($no == 1) {

@@ -33,8 +33,14 @@
 
                 //mengubah data json menjadi data array asosiatif
                 $result = json_decode($content, true);
+                if ($result) {
+                    $array = array_unique($result, SORT_REGULAR);
+                } else {
+                    $array = [];
+                }
                 $no = 1;
-                foreach ($result as $value) {
+
+                foreach ($array as $value) {
                     $nama_file = $value['nama_file'];
 
                     if ($no == 1) {
