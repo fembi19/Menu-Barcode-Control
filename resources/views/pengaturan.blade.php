@@ -52,19 +52,11 @@
             <?php
 
             $content = file_get_contents('datagambar.json');
-            //mengubah standar encoding
-            $content = utf8_encode($content);
 
             //mengubah data json menjadi data array asosiatif
-            $result = json_decode($content, true);
+            $result = array_unique(json_decode($content, true));
 
             if ($result) {
-                function cmp($a, $b)
-                {
-                    return $a['id'] > $b['id'];
-                }
-
-                usort($result, 'cmp');
 
                 $no = 1;
 

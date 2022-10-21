@@ -32,8 +32,7 @@
                 $content = utf8_encode($content);
 
                 //mengubah data json menjadi data array asosiatif
-                $result = json_decode($content, true);
-                sort($result);
+                $result = array_unique(json_decode($content, true));
                 $no = 1;
                 foreach ($result as $value) {
                     $nama_file = $value['nama_file'];
