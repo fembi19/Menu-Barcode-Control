@@ -58,7 +58,20 @@
 
 
             if ($result) {
-                $array = array_unique($result, SORT_REGULAR);
+                $array = [];
+
+                $nama_file = [];
+                foreach ($result as $key1 =>  $value1) {
+                    $nama_file[] =  $value1['nama_file'];
+                }
+                $nama_fileO = array_unique($nama_file, SORT_REGULAR);
+
+                foreach ($nama_fileO as $key2 => $value2) {
+                    $array[] = ['id' => $key2 + 1, 'nama_file' => $value2['nama_file']];
+                }
+
+
+                file_put_contents('datagambar.json', $array);
             } else {
                 $array = [];
             }
