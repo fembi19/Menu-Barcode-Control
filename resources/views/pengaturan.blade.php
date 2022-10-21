@@ -54,7 +54,7 @@
             $content = file_get_contents('datagambar.json');
 
             //mengubah data json menjadi data array asosiatif
-            $result = array_unique(json_decode($content, true));
+            $result = json_decode($content, true);
 
             if ($result) {
 
