@@ -58,7 +58,6 @@
 
 
             if ($result) {
-                $array = [];
 
                 $nama_file = [];
                 foreach ($result as $key1 =>  $value1) {
@@ -66,12 +65,13 @@
                 }
                 $nama_fileO = array_unique($nama_file, SORT_REGULAR);
 
+                $array = [];
                 foreach ($nama_fileO as $key2 => $value2) {
-                    $array[] = ['id' => $key2 + 1, 'nama_file' => $value2['nama_file']];
+                    $array[] = array('id' => $key2 + 1, 'nama_file' => $value2);
                 }
 
 
-                file_put_contents('datagambar.json', $array);
+                file_put_contents('datagambar.json', json_encode($array));
             } else {
                 $array = [];
             }
