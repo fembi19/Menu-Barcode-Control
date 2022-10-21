@@ -75,6 +75,8 @@
                     return (int) $angkax;
                 }
 
+                print_r($array);
+
                 foreach ($array as $value) {
                     $nama_file = $value['nama_file'];
                     $id = $value['id'];
